@@ -11,7 +11,7 @@ pipeline {
 
         stage('Security Scan - Gitleaks') {
             steps {
-                bat 'gitleaks git .'
+                bat '"C:/Users/bavis/AppData/Local/Microsoft/WinGet/Packages/Gitleaks.Gitleaks_Microsoft.Winget.Source_8wekyb3d8bbwe/gitleaks.exe" git .'
             }
         }
 
