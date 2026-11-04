@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIA 2 Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div>
+        <p class="eyebrow">CIA 2 · DEVOPS PROJECT</p>
+        <h1>Expense Tracker</h1>
+        <p class="subtitle">Keep track of where your money goes.</p>
+      </div>
+      <span id="apiStatus" class="status">Connecting…</span>
+    </header>
+
+    <section class="summary">
+      <article><span>Total spent</span><strong id="totalSpent">₹0.00</strong></article>
+      <article><span>Transactions</span><strong id="expenseCount">0</strong></article>
+    </section>
+
+    <section class="panel">
+      <h2>Add an expense</h2>
+      <form id="expenseForm">
+        <div class="fields">
+          <div class="field">
+            <label for="title">Expense name</label>
+            <input id="title" name="title" placeholder="e.g. Lunch" maxlength="80" required>
+          </div>
+          <div class="field">
+            <label for="amount">Amount (₹)</label>
+            <input id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="250" required>
+          </div>
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Bills">Bills</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Health">Health</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="date">Date</label>
+            <input id="date" name="date" type="date" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="notes">Notes (optional)</label>
+          <input id="notes" name="notes" placeholder="Add a short note" maxlength="200">
+        </div>
+        <button type="submit" id="saveButton">Add expense</button>
+        <p id="formMessage" class="message" role="status"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="sectionHeading">
+        <h2>Recent expenses</h2>
+        <select id="filterCategory" aria-label="Filter by category">
+          <option value="">All categories</option>
+          <option>Food</option><option>Transport</option><option>Bills</option>
+          <option>Shopping</option><option>Health</option><option>Other</option>
+        </select>
+      </div>
+      <div id="expenseList" class="expenseList"><p class="muted">Loading expenses…</p></div>
+    </section>
+
+    <section class="panel">
+      <h2>Spending by category</h2>
+      <div id="categorySummary" class="categorySummary"><p class="muted">Loading summary…</p></div>
+    </section>
+
+    <footer>Java · Spring Boot · Maven · REST API</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
