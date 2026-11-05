@@ -40,19 +40,19 @@ pipeline {
                     bat '''
                         set AZURE_CONFIG_DIR=%WORKSPACE%\\.azure
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" login --service-principal -u "%AZURE_CLIENT_ID%" -p "%AZURE_CLIENT_SECRET%" --tenant "%AZURE_TENANT_ID%"
+                        call "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" login --service-principal -u "%AZURE_CLIENT_ID%" -p "%AZURE_CLIENT_SECRET%" --tenant "%AZURE_TENANT_ID%"
                         if errorlevel 1 exit /b 1
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" account set --subscription "%AZURE_SUBSCRIPTION_ID%"
+                        call "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" account set --subscription "%AZURE_SUBSCRIPTION_ID%"
                         if errorlevel 1 exit /b 1
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" acr login --name %ACR_NAME%
+                        call "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" acr login --name cia2expenseregistry
                         if errorlevel 1 exit /b 1
 
-                        docker push %ACR_LOGIN_SERVER%/%IMAGE_NAME%:build-%BUILD_NUMBER%
+                        docker push cia2expenseregistry.azurecr.io/cia2-expense-tracker:build-%BUILD_NUMBER%
                         if errorlevel 1 exit /b 1
 
-                        echo IMAGE PUSHED SUCCESSFULLY
+                        echo Docker image successfully pushed to ACR.
                     '''
                 }
             }
