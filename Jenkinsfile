@@ -20,5 +20,11 @@ pipeline {
                 bat 'mvn clean test'
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t cia2-expense-tracker:%BUILD_NUMBER% .'
+            }
+        }
     }
 }
