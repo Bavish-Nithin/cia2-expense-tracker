@@ -8,8 +8,6 @@ pipeline {
         IMAGE_NAME = 'cia2-expense-tracker'
         RESOURCE_GROUP = 'cia2-expense-rg'
         AKS_CLUSTER = 'cia2-expense-aks'
-        AZ = '"C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd"'
-        KUBECTL = '"C:\\Users\\bavis\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe"'
     }
 
     stages {
@@ -31,7 +29,6 @@ pipeline {
             }
         }
 
-        
         stage('Push Image to ACR') {
             steps {
                 withCredentials([
@@ -49,18 +46,17 @@ pipeline {
                         "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" account set --subscription "%AZURE_SUBSCRIPTION_ID%"
                         if errorlevel 1 exit /b 1
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" acr login --name cia2expenseregistry
+                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" acr login --name %ACR_NAME%
                         if errorlevel 1 exit /b 1
 
-                        docker push cia2expenseregistry.azurecr.io/cia2-expense-tracker:build-%BUILD_NUMBER%
+                        docker push %ACR_LOGIN_SERVER%/%IMAGE_NAME%:build-%BUILD_NUMBER%
                         if errorlevel 1 exit /b 1
 
-                        echo Docker image successfully pushed to ACR.
+                        echo IMAGE PUSHED SUCCESSFULLY
                     '''
                 }
             }
         }
-
 
         stage('Deploy to AKS') {
             steps {
@@ -72,22 +68,25 @@ pipeline {
                 ]) {
                     bat '''
                         set AZURE_CONFIG_DIR=%WORKSPACE%\\.azure
-                        %AZ% login --service-principal -u "%AZURE_CLIENT_ID%" -p "%AZURE_CLIENT_SECRET%" --tenant "%AZURE_TENANT_ID%"
+
+                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" login --service-principal -u "%AZURE_CLIENT_ID%" -p "%AZURE_CLIENT_SECRET%" --tenant "%AZURE_TENANT_ID%"
                         if errorlevel 1 exit /b 1
 
-                        %AZ% account set --subscription "%AZURE_SUBSCRIPTION_ID%"
+                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" account set --subscription "%AZURE_SUBSCRIPTION_ID%"
                         if errorlevel 1 exit /b 1
 
-                        %AZ% aks get-credentials --resource-group %RESOURCE_GROUP% --name %AKS_CLUSTER% --admin --file "%WORKSPACE%\\jenkins-kubeconfig" --overwrite-existing
+                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" aks get-credentials --resource-group %RESOURCE_GROUP% --name %AKS_CLUSTER% --admin --file "%WORKSPACE%\\jenkins-kubeconfig" --overwrite-existing
                         if errorlevel 1 exit /b 1
 
                         set KUBECONFIG=%WORKSPACE%\\jenkins-kubeconfig
 
-                        %KUBECTL% set image deployment/expense-tracker expense-tracker=%ACR_LOGIN_SERVER%/%IMAGE_NAME%:build-%BUILD_NUMBER%
+                        "C:\\Users\\bavis\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" set image deployment/expense-tracker expense-tracker=%ACR_LOGIN_SERVER%/%IMAGE_NAME%:build-%BUILD_NUMBER%
                         if errorlevel 1 exit /b 1
 
-                        %KUBECTL% rollout status deployment/expense-tracker --timeout=180s
+                        "C:\\Users\\bavis\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" rollout status deployment/expense-tracker --timeout=180s
                         if errorlevel 1 exit /b 1
+
+                        echo AKS DEPLOYMENT SUCCESSFUL
                     '''
                 }
             }
