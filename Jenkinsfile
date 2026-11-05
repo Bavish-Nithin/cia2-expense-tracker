@@ -69,24 +69,22 @@ pipeline {
                     bat '''
                         set AZURE_CONFIG_DIR=%WORKSPACE%\\.azure
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" login --service-principal -u "%AZURE_CLIENT_ID%" -p "%AZURE_CLIENT_SECRET%" --tenant "%AZURE_TENANT_ID%"
+                        call "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" login --service-principal -u "%AZURE_CLIENT_ID%" -p "%AZURE_CLIENT_SECRET%" --tenant "%AZURE_TENANT_ID%"
                         if errorlevel 1 exit /b 1
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" account set --subscription "%AZURE_SUBSCRIPTION_ID%"
+                        call "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" account set --subscription "%AZURE_SUBSCRIPTION_ID%"
                         if errorlevel 1 exit /b 1
 
-                        "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" aks get-credentials --resource-group %RESOURCE_GROUP% --name %AKS_CLUSTER% --admin --file "%WORKSPACE%\\jenkins-kubeconfig" --overwrite-existing
+                        call "C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd" aks get-credentials --resource-group cia2-expense-rg --name cia2-expense-aks --admin --file "%WORKSPACE%\\jenkins-kubeconfig" --overwrite-existing
                         if errorlevel 1 exit /b 1
 
                         set KUBECONFIG=%WORKSPACE%\\jenkins-kubeconfig
 
-                        "C:\\Users\\bavis\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" set image deployment/expense-tracker expense-tracker=%ACR_LOGIN_SERVER%/%IMAGE_NAME%:build-%BUILD_NUMBER%
+                        "C:\\Users\\bavis\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" set image deployment/expense-tracker expense-tracker=cia2expenseregistry.azurecr.io/cia2-expense-tracker:build-%BUILD_NUMBER%
                         if errorlevel 1 exit /b 1
 
                         "C:\\Users\\bavis\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe" rollout status deployment/expense-tracker --timeout=180s
                         if errorlevel 1 exit /b 1
-
-                        echo AKS DEPLOYMENT SUCCESSFUL
                     '''
                 }
             }
