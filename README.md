@@ -61,3 +61,6 @@ java -jar target/expense-tracker-0.0.1-SNAPSHOT.jar
 
 ## Important note
 This starter version stores expenses in memory. Records reset when the application restarts. A database can be added later if persistent storage is needed.
+
+
+CI/CD automatic deployment test.
